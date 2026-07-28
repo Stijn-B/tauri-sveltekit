@@ -1,8 +1,10 @@
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import svelte from 'eslint-plugin-svelte';
 
 export default [
 	js.configs.recommended,
+	...svelte.configs.recommended,
 	prettier,
 	{
 		ignores: [
