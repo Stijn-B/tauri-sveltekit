@@ -18,7 +18,7 @@
 					SvelteKit v2
 				</span>
 				<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
-					Vite v6
+					Vite v8
 				</span>
 				<span class="bg-sky-100 text-sky-800 px-3 py-1 rounded-md text-sm font-medium">
 					Tauri v2

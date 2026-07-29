@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"engines": {
-		"node": ">=20.19.0"
+		"node": "^22.12.0 || >=24.0.0"
 	},
 	"scripts": {
 		"dev": "npm run tauri dev",
@@ -15,28 +15,35 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"audit": "npm run audit:frontend && npm run audit:rust",
+		"audit:frontend": "npm audit --audit-level=low",
+		"audit:rust": "cd src-tauri && cargo audit --deny warnings"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.70.1",
-		"@sveltejs/vite-plugin-svelte": "^5.1.1",
+		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@tailwindcss/vite": "^4.3.3",
 		"@tauri-apps/cli": "^2.11.4",
 		"eslint": "^10.8.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.22.0",
+		"globals": "^17.8.0",
 		"prettier": "^3.9.6",
-		"prettier-plugin-svelte": "^3.5.2",
+		"prettier-plugin-svelte": "^4.1.1",
 		"svelte": "^5.56.8",
 		"svelte-check": "^4.7.4",
 		"tailwindcss": "^4.3.3",
-		"typescript": "^5.9.3",
-		"vite": "^6.4.3"
+		"typescript": "^6.0.3",
+		"vite": "^8.1.5"
 	},
 	"overrides": {
-		"cookie": "^0.7.2"
+		"@sveltejs/kit": {
+			"cookie": "^0.7.2"
+		}
 	},
-	"type": "module"
+	"type": "module",
+	"packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b"
 }

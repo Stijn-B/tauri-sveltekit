@@ -1,46 +1,45 @@
 # Creating a desktop application with Tauri and SvelteKit
 
-> [!NOTE]  
-> Clone this repository to get the final result of this tutorial.
+> [!NOTE]
+> Clone this repository to see the completed configuration.
 
-## Step 0: Prerequisites
+## Step 0: Install the prerequisites
 
-Make sure you have all [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites) set up.
+Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). You
+will need Rust, the platform-specific system dependencies, and a supported Node.js release
+(22.12 or newer within Node 22, or Node 24+).
 
-## Step 1: Setup SvelteKit project
+## Step 1: Create a SvelteKit project
 
-Create a SvelteKit project and proceed through the prompts to set it up.
+Create the project with the current Svelte CLI:
 
 ```shell
-npm create svelte@latest tauri-sveltekit
+npx sv create tauri-sveltekit
 cd tauri-sveltekit
 npm install
 ```
 
-Alternatively, you can use one of your existing SvelteKit projects.
+You can follow the same steps in an existing SvelteKit project.
 
-### Setup adapter-static
+### Configure a static SPA build
 
-Tauri looks for static files to display in its WebView. SvelteKit has the [@sveltejs/adapter-static adapter](https://kit.svelte.dev/docs/adapters#supported-environments-static-sites) to build static websites.
-
-Install the adapter with:
+Tauri loads static frontend assets in its webview, so install SvelteKit's static adapter:
 
 ```shell
-npm install -D @sveltejs/adapter-static@next
+npm install -D @sveltejs/adapter-static
+npm uninstall -D @sveltejs/adapter-auto
 ```
 
-Set up the new adapter in `svelte.config.js`:
+Configure `svelte.config.js`:
 
 ```javascript
-import adapter from '@sveltejs/adapter-static'; // <-- adapter-static replaces adapter-auto
-import preprocess from 'svelte-preprocess';
+import adapter from '@sveltejs/adapter-static';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: preprocess(),
-
+	preprocess: vitePreprocess(),
 	kit: {
-		// some settings for adapter-static:
 		adapter: adapter({
 			pages: 'build',
 			assets: 'build',
@@ -52,26 +51,13 @@ const config = {
 export default config;
 ```
 
-Uninstall the old adapter with:
-
-```shell
-npm uninstall -D @sveltejs/adapter-auto
-```
-
-### Disable server-side rendering (SSR)
-
-To disable server side rendering create the following `src/+layout.js` file:
+Create `src/routes/+layout.js` to make the application a client-rendered SPA:
 
 ```javascript
-export const prerender = true;
 export const ssr = false;
 ```
 
-([more info](https://kit.svelte.dev/docs/page-options#ssr))
-
-### Create sveltekit scripts
-
-Add the following SvelteKit scripts to your `package.json`:
+Add explicit frontend scripts to `package.json`:
 
 ```json
 {
@@ -82,17 +68,21 @@ Add the following SvelteKit scripts to your `package.json`:
 }
 ```
 
-## Step 2: Add Tauri CLI
-
-[Tauri CLI](https://tauri.app/v1/api/cli/) is for building and bundeling your app. It's the part of Tauri that turns your website (SvelteKit project) into a desktop app.
-
-At the root of you SvelteKit project, add the Tauri CLI as a developer dependency:
+Tailwind is optional. To match this repository, add it with the Svelte CLI:
 
 ```shell
-npm install -D @tauri-apps/cli
+npx sv add tailwindcss
 ```
 
-Add a Tauri script and update the dev and build script in your `package.json`:
+## Step 2: Add Tauri
+
+Install the Tauri 2 CLI:
+
+```shell
+npm install -D @tauri-apps/cli@latest
+```
+
+Add the Tauri scripts to `package.json`:
 
 ```json
 {
@@ -104,128 +94,95 @@ Add a Tauri script and update the dev and build script in your `package.json`:
 }
 ```
 
-## Step 3: Setup Tauri
-
-Initialise Tauri with `npm run tauri init`. When proceeding through the prompts, update some of the suggested settings to match the SvelteKit dev server and build output.
+Initialize the Rust backend:
 
 ```shell
-npm tauri init
-> What is your app name? › tauri-sveltekit
-> What should the window title be? (tauri-sveltekit) › Tauri x SvelteKit
-> Where are your web assets (HTML/CSS/JS) located, relative to the "<current dir>/src-tauri/tauri.conf.json" file that will be created? (../public) › ../build <-- Change the default location to ../build
-> What is the url of your dev server? › http://localhost:5173 <-- Change the port to 5173
-> What is your frontend dev command? · npm run sveltekit:dev <-- Update the dev command
-> What is your frontend build command? · npm run sveltekit:build <-- Update the build command
+npx tauri init
 ```
 
-If you want to change any of these settings afterwards, they are available in `src-tauri/tauri.conf.json`
+Use values matching the SvelteKit development server and static build:
 
-### Optional: Using another port
-
-You can choose the port on which the SvelteKit website is hosted during local development. Just point the Tauri devPath to the SvelteKit development server.
-
-Set the SvelteKit development server port in `vite.config.js`:
-
-```javascript
-import { sveltekit } from '@sveltejs/kit/vite';
-
-/** @type {import('vite').UserConfig} */
-const config = {
-	plugins: [sveltekit()],
-	server: {
-		port: YOUR_PREFERRED_PORT
-	}
-};
-
-export default config;
+```text
+What is your app name? tauri-sveltekit
+What should the window title be? Tauri x SvelteKit
+Where are your web assets located? ../build
+What is the URL of your dev server? http://localhost:5173
+What is your frontend dev command? npm run sveltekit:dev
+What is your frontend build command? npm run sveltekit:build
 ```
 
-Set the Tauri devPath in `src-tauri/tauri.conf.json`:
+The resulting `src-tauri/tauri.conf.json` build section should look like this:
 
 ```json
 {
 	"build": {
-		"devPath": "http://localhost:YOUR_PREFERRED_PORT"
+		"beforeBuildCommand": "npm run sveltekit:build",
+		"beforeDevCommand": "npm run sveltekit:dev",
+		"devUrl": "http://localhost:5173",
+		"frontendDist": "../build"
 	}
 }
 ```
 
-## Step 4: Optional: Add Tauri API
+Tauri recommends preventing Vite from watching generated Rust files. Add the watch
+exclusion alongside your existing Vite plugins:
 
-While the previously added [Tauri CLI](https://tauri.app/v1/api/cli/) handles building and bundeling your app, the [Tauri API](https://tauri.app/v1/api/js/) adds backend functionality. This API is optional since you won't need it if you're just rendering a static website to communicate with a remote server. However, if you want access to more than a standard browser environment you will need it.
+```javascript
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
 
-Tauri API Examples:
-
-- [Call a custom command (defined in the Rust backend)](https://tauri.app/v1/api/js/modules/tauri#invoke)
-- [Access to the file system (read- and writing files)](https://tauri.app/v1/api/js/modules/fs)
-- [Read and write to the system clipboard](https://tauri.app/v1/api/js/modules/clipboard)
-
-Add the the Tauri API to your project with:
-
-```
-npm install @tauri-apps/api
-```
-
-Note that in contrast to the CLI, this isn't a developer dependency because it's not only a build-stage and development requirement but also a production requirement.
-
-### `allowlist`
-
-To improve security, Tauri only allows backend API calls that are allowlisted in `src-tauri/tauri.conf.json`.
-
-For example the file system API can be allowlisted in `src-tauri/tauri.conf.json` like this:
-
-```json
-{
-	"tauri": {
-		"allowlist": {
-			"fs": {
-				"all": true, // enable all FS APIs
-				"readFile": true,
-				"writeFile": true,
-				"readDir": true,
-				"copyFile": true,
-				"createDir": true,
-				"removeDir": true,
-				"removeFile": true,
-				"renameFile": true
-			}
+export default defineConfig({
+	plugins: [sveltekit()],
+	server: {
+		watch: {
+			ignored: ['**/src-tauri/**']
 		}
 	}
-}
+});
 ```
 
-## Step 5: Run or build Tauri app
+If you change Vite's port, update `build.devUrl` in `tauri.conf.json` to match.
 
-### Run Tauri app
+## Step 3: Add optional native APIs
+
+The Tauri CLI is a development dependency. Frontend APIs and native functionality are
+provided by separate Tauri packages and plugins. For example:
+
+```shell
+npm run tauri add fs
+```
+
+Tauri 2 controls access through capability files in `src-tauri/capabilities/`. Grant only
+the commands and path scopes the application needs. See the
+[capabilities guide](https://v2.tauri.app/security/capabilities/) and the documentation
+for each plugin before enabling permissions.
+
+## Step 4: Run and build the application
+
+Start the desktop application in development mode:
 
 ```shell
 npm run dev
 ```
 
-The first time you run the Tauri app it will generate a `Cargo.lock` file. It's purpose is _"to describe the state of the world at the time of a successful build"_ and you should add it to your version control ([source](https://doc.rust-lang.org/cargo/faq.html#why-do-binaries-have-cargolock-in-version-control-but-not-libraries)).
+Keep `src-tauri/Cargo.lock` in version control so application builds use the reviewed Rust
+dependency graph.
 
-### Build Tauri app
-
-To build your Tauri app you must specify its identifier in reverse domain name notation (e.g. `com.tauri.my-tauri-app`). This string must be unique across applications and contain only alphanumeric characters (A–Z, a–z, and 0–9), hyphens (-), and periods (.).
-
-Set your application identifier in `src-tauri/tauri.conf.json`:
+Before distributing the app, set a unique reverse-domain identifier at the top level of
+`src-tauri/tauri.conf.json`:
 
 ```json
 {
-	"tauri": {
-		"bundle": {
-			"identifier": "com.example.my-tauri-app"
-		}
-	}
+	"identifier": "com.example.my-tauri-app"
 }
 ```
 
-Then build your app with:
+Build the platform package:
 
 ```shell
 npm run build
 ```
 
-It will detect your operating system and build a bundle accordingly. The result will be located in `src-tauri/target/release`.
-
-For more information about building applications for different platforms check out [the official documentation](https://tauri.app/v1/guides/building/)
+Bundles are written below `src-tauri/target/release/bundle/`. See the
+[Tauri distribution documentation](https://v2.tauri.app/distribute/) for signing and
+platform-specific packaging.

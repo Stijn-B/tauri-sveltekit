@@ -4,25 +4,45 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
-      frontend-dependencies:
+      frontend-non-major:
         patterns:
           - '*'
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # SvelteKit and svelte-check currently support TypeScript through v6.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: cargo
     directory: /src-tauri
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
-      rust-dependencies:
+      rust-non-major:
         patterns:
           - '*'
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
-      github-actions:
+      github-actions-non-major:
         patterns:
           - '*'
+        update-types:
+          - minor
+          - patch
