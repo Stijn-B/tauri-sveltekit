@@ -1,17 +1,5 @@
-.DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
-.env
-.env.*
-!.env.example
-
-# Tauri
-/src-tauri/target
-/src-tauri/gen
-
-# Ignore files for PNPM, NPM and YARN
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
+.svelte-kit/
+build/
+node_modules/
+src-tauri/gen/
+src-tauri/target/

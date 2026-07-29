@@ -6,14 +6,18 @@
 2. [How it Works](#how-it-works)
 3. [About the Frameworks](#about-the-frameworks)
 4. [Desktop Apps with SvelteKit and Tauri - Step-by-Step Tutorial](#desktop-apps-with-sveltekit-and-tauri---step-by-step-tutorial)
-5. [Extra](#extra)
 
 ## Getting Started
+
+Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), including
+Rust and a supported Node.js release (22.12 or newer within Node 22, or Node 24+). The
+repository's recommended Node and Rust toolchains are recorded in `.nvmrc` and
+`rust-toolchain.toml`.
 
 **Install the packages**
 
 ```shell
-npm install
+npm ci
 ```
 
 **Specify your application identifier**
@@ -24,11 +28,7 @@ Set your application identifier in `src-tauri/tauri.conf.json`:
 
 ```json
 {
-	"tauri": {
-		"bundle": {
-			"identifier": "com.example.my-tauri-app"
-		}
-	}
+	"identifier": "com.example.my-tauri-app"
 }
 ```
 
@@ -54,10 +54,10 @@ npm run build
 
 ## How it works
 
-Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. SvelteKit can be configured to build a static website (compile to HTML, JS and CSS) using the [@sveltejs/adapter-static adapter](https://kit.svelte.dev/docs/adapter-static). This enables us to use Tauri with SvelteKit.
+Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. SvelteKit can be configured to build a static single-page app using the [@sveltejs/adapter-static adapter](https://kit.svelte.dev/docs/adapter-static). This enables us to use Tauri with SvelteKit.
 
 > [!IMPORTANT]  
-> When using SvelteKit as a static site generator, some of it's features like server-side rendering (SSR) and server endpoints are not available. This is because static site generators are designed to generate static websites that can be hosted on a server or a content delivery network (CDN). There is no server involved in the process of serving the website to the user. Instead, the website is pre-built and served as a collection of static files. This limitation is exactly what makes it possible to integrate SvelteKit with Tauri this way.
+> In SPA mode, SvelteKit features that require a server, such as server-side rendering (SSR) and server endpoints, are not available at runtime. Tauri loads the pre-built static files directly in its webview instead of running a SvelteKit server.
 
 ## About the frameworks
 
@@ -67,28 +67,7 @@ Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. Sv
 
 ## Desktop Apps with SvelteKit and Tauri - Step-by-Step Tutorial
 
-The [TUTORIAL.md](/TUTORIAL.md) file contains a step-by-step guide on how to manually create a desktop application with Tauri and SvelteKit. It can be a usefull resource when you want to turn your existing SvelteKit project into a desktop app, or when you want to add SvelteKit to your existing Tauri project.
+The [TUTORIAL.md](/TUTORIAL.md) file contains a current Tauri 2 and SvelteKit 2 guide for manually creating the same setup. It is useful when you want to turn an existing SvelteKit project into a desktop app, or add SvelteKit to an existing Tauri project.
 
 > [!NOTE]  
 > Clone this repository to get the final result of the tutorial.
-
-## Extra
-
-### Removing the Menu Bar
-
-The generated Tauri project contains a menu bar. To remove it, delete the `.menu` parameter from the Tauri builder in `src-tauri/main.rs`:
-
-```rust
-#![cfg_attr(
-  all(not(debug_assertions), target_os = "windows"),
-  windows_subsystem = "windows"
-)]
-
-fn main() {
-  let context = tauri::generate_context!();
-  tauri::Builder::default()
-	// .menu(tauri::Menu::os_default(&context.package_info().name)) <-- remove this line
-	.run(context)
-	.expect("error while running tauri application");
-}
-```

@@ -3,7 +3,12 @@ import tailwindcss from '@tailwindcss/vite';
 
 /** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [tailwindcss(), sveltekit()]
+	plugins: [tailwindcss(), sveltekit()],
+	server: {
+		watch: {
+			ignored: ['**/src-tauri/**']
+		}
+	}
 };
 
 export default config;

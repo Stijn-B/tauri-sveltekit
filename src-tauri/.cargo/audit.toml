@@ -1,0 +1,24 @@
+[advisories]
+ignore = [
+  # Tauri 2 still uses the upstream GTK3 stack on Linux, so this application
+  # cannot remove these transitive crates. Tauri's own audit policy also
+  # ignores the glib advisory pending its GTK4 migration.
+  "RUSTSEC-2024-0370", # proc-macro-error is unmaintained
+  "RUSTSEC-2024-0411", # gdkwayland-sys is unmaintained
+  "RUSTSEC-2024-0412", # gdk is unmaintained
+  "RUSTSEC-2024-0413", # atk is unmaintained
+  "RUSTSEC-2024-0414", # gdkx11-sys is unmaintained
+  "RUSTSEC-2024-0415", # gtk is unmaintained
+  "RUSTSEC-2024-0416", # atk-sys is unmaintained
+  "RUSTSEC-2024-0417", # gdkx11 is unmaintained
+  "RUSTSEC-2024-0418", # gdk-sys is unmaintained
+  "RUSTSEC-2024-0419", # gtk3-macros is unmaintained
+  "RUSTSEC-2024-0420", # gtk-sys is unmaintained
+  "RUSTSEC-2024-0429", # glib 0.18 unsoundness; fixed by GTK4
+  # These unmaintained Unicode crates are also transitive through Tauri 2.
+  "RUSTSEC-2025-0075",
+  "RUSTSEC-2025-0080",
+  "RUSTSEC-2025-0081",
+  "RUSTSEC-2025-0098",
+  "RUSTSEC-2025-0100",
+]

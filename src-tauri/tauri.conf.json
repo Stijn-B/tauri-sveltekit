@@ -1,5 +1,5 @@
 {
-	"$schema": "../node_modules/@tauri-apps/cli/schema.json",
+	"$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 	"productName": "tauri-sveltekit",
 	"version": "0.1.0",
 	"identifier": "com.auros.tauri-sveltekit",
@@ -39,11 +39,6 @@
 		],
 		"resources": [],
 		"externalBin": [],
-		"linux": {
-			"deb": {
-				"depends": []
-			}
-		},
 		"macOS": {
 			"frameworks": [],
 			"entitlements": null,

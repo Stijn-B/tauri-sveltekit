@@ -6,8 +6,16 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   frontend:
+    timeout-minutes: 15
     strategy:
       matrix:
         platform: [ubuntu-latest, windows-latest, macos-latest]
@@ -15,12 +23,14 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.19'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
@@ -31,16 +41,18 @@ jobs:
 
       - name: Frontend lint
         run: npm run lint
-        if: matrix.platform != 'windows-latest'
 
       - name: Frontend build
         run: npm run sveltekit:build
 
   rust:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install system dependencies
         run: |
@@ -48,15 +60,10 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.19'
+          node-version-file: '.nvmrc'
           cache: 'npm'
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
 
       - name: Install dependencies
         run: npm ci
@@ -69,43 +76,56 @@ jobs:
         working-directory: src-tauri
 
       - name: Rust clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
+        working-directory: src-tauri
+
+      - name: Rust tests
+        run: cargo test --locked --all-targets --all-features
         working-directory: src-tauri
 
       - name: Rust build
-        run: cargo build
+        run: cargo build --locked
         working-directory: src-tauri
 
   security:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.19'
-          cache: 'npm'
+          node-version-file: '.nvmrc'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install frontend dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
 
       - name: Audit frontend dependencies
-        run: npm audit
+        run: npm audit --audit-level=low
 
-      - name: Audit Rust dependencies
-        uses: rustsec/audit-check@v2.0.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: src-tauri
+      - name: Verify npm registry signatures
+        run: npm audit signatures
+
+      - name: Install Rust audit tool
+        run: cargo install cargo-audit --locked --version 0.22.1
+
+      - name: Audit Rust dependencies strictly
+        run: cargo audit --deny warnings
+        working-directory: src-tauri
 
   integration:
     needs: [frontend, rust, security]
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install system dependencies
         run: |
@@ -113,13 +133,10 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20.19'
+          node-version-file: '.nvmrc'
           cache: 'npm'
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
 
       - name: Install dependencies
         run: npm ci

@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import svelte from 'eslint-plugin-svelte';
+import globals from 'globals';
 
 export default [
 	js.configs.recommended,
@@ -17,25 +18,11 @@ export default [
 	},
 	{
 		languageOptions: {
-			ecmaVersion: 2020,
+			ecmaVersion: 'latest',
 			sourceType: 'module',
 			globals: {
-				// Browser globals
-				window: 'readonly',
-				document: 'readonly',
-				navigator: 'readonly',
-				console: 'readonly',
-				// ES2017 globals
-				Promise: 'readonly',
-				// Node.js globals
-				process: 'readonly',
-				Buffer: 'readonly',
-				__dirname: 'readonly',
-				__filename: 'readonly',
-				module: 'readonly',
-				require: 'readonly',
-				exports: 'readonly',
-				global: 'readonly'
+				...globals.browser,
+				...globals.node
 			}
 		}
 	}
