@@ -55,6 +55,9 @@ export default defineConfig({
 			})
 		})
 	],
+	build: {
+		target: ['chrome111', 'safari16.4']
+	},
 	server: {
 		port: 5173,
 		strictPort: true,
@@ -103,6 +106,10 @@ Tailwind is optional. To match this repository, add it with the Svelte CLI:
 ```shell
 npx sv add tailwindcss
 ```
+
+The explicit Chromium 111 / Safari 16.4 JavaScript targets match this starter's
+Tailwind browser baseline. Transpilation handles JavaScript syntax; it does not
+polyfill missing browser APIs or CSS.
 
 ## Step 2: Add Tauri
 
@@ -207,6 +214,13 @@ Before distributing the app, set a unique reverse-domain identifier at the top l
 	"identifier": "com.example.my-tauri-app"
 }
 ```
+
+Match the bundled application's system requirements to its frontend. For this
+starter's Tailwind configuration, add `minimumSystemVersion: "13.3"` under
+`bundle.macOS` and `minimumWebview2Version: "111.0.0.0"` under `bundle.windows` in
+`tauri.conf.json`. Keep Linux WebKitGTK packages updated; their `4.1` API version is
+not the browser-engine version. See the [README runtime requirements](README.md#runtime-requirements)
+and test on the oldest systems your own application supports.
 
 Build the platform package:
 

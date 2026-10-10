@@ -89,6 +89,32 @@ Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. Sv
 > [!IMPORTANT]  
 > In SPA mode, SvelteKit features that require a server, such as server-side rendering (SSR) and server endpoints, are not available at runtime. Tauri loads the pre-built static files directly in its webview instead of running a SvelteKit server.
 
+## Runtime requirements
+
+Tauri uses the operating system's WebView rather than bundling a browser. This
+starter's frontend targets Chromium 111 and Safari/WebKit 16.4, matching the
+[Tailwind CSS compatibility requirements](https://tailwindcss.com/docs/compatibility).
+
+| Platform | Frontend runtime requirement                                                                                            |
+| -------- | ----------------------------------------------------------------------------------------------------------------------- |
+| macOS    | macOS 13.3 or newer, which provides Safari 16.4-equivalent system WebKit                                                |
+| Windows  | Windows 10/11 with WebView2 111 or newer; keep the Evergreen runtime updated                                            |
+| Linux    | WebKitGTK with Safari 16.4-equivalent or newer web-platform support; keep the distribution's WebKitGTK packages updated |
+
+The macOS bundle declares 13.3 as its minimum system version. Windows installers
+check `minimumWebview2Version` against `111.0.0.0`. Vite's JavaScript targets are
+explicit so future Vite upgrades cannot silently change this frontend baseline.
+
+On Linux, `webkit2gtk-4.1` is the API/ABI package name, not a browser-engine version;
+installing a package with that name alone does not establish frontend compatibility.
+See [Tauri's WebView version guide](https://v2.tauri.app/reference/webview-versions/).
+
+These are the starter's compatibility requirements, not a claim that every older
+platform or minimum-version runtime is tested. CI builds on the current hosted
+runners; test your packaged app on the oldest systems you intend to support, especially
+when adding browser APIs or changing dependencies. CI does not cover Intel macOS,
+Windows ARM, Linux ARM, or mobile targets.
+
 ## Content Security Policy
 
 The packaged app uses a [Content Security Policy](https://v2.tauri.app/security/csp/)
