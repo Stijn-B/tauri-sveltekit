@@ -1,3 +1,7 @@
+<svelte:head>
+	<title>Tauri × SvelteKit</title>
+</svelte:head>
+
 <div
 	class="min-h-screen flex items-center justify-center p-4"
 	style="background: linear-gradient(135deg, #acdff0 0%, #ffeec9 50%, #ffdbce 100%);"

@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	clearScreen: false,
 	plugins: [
 		tailwindcss(),
 		sveltekit({
@@ -17,6 +18,9 @@ export default defineConfig({
 		})
 	],
 	server: {
+		// Keep this in sync with build.devUrl in src-tauri/tauri.conf.json.
+		port: 5173,
+		strictPort: true,
 		watch: {
 			ignored: ['**/src-tauri/**']
 		}
