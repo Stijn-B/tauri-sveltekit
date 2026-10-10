@@ -17,6 +17,10 @@ export default defineConfig({
 			})
 		})
 	],
+	// Match the WebView requirements documented in README.md.
+	build: {
+		target: ['chrome111', 'safari16.4']
+	},
 	server: {
 		// Keep this in sync with build.devUrl in src-tauri/tauri.conf.json.
 		port: 5173,

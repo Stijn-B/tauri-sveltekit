@@ -69,12 +69,14 @@
 			"entitlements": null,
 			"exceptionDomain": "",
 			"providerShortName": null,
-			"signingIdentity": null
+			"signingIdentity": null,
+			"minimumSystemVersion": "13.3"
 		},
 		"windows": {
 			"certificateThumbprint": null,
 			"digestAlgorithm": "sha256",
-			"timestampUrl": ""
+			"timestampUrl": "",
+			"minimumWebview2Version": "111.0.0.0"
 		}
 	}
 }
