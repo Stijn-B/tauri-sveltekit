@@ -7,7 +7,7 @@
 
 Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). You
 will need Rust, the platform-specific system dependencies, and a supported Node.js release
-(22.12 or newer within Node 22, or Node 24+).
+(22.13 or newer within Node 22, or Node 24+).
 
 ## Step 1: Create a SvelteKit project
 

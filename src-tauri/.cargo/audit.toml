@@ -15,10 +15,4 @@ ignore = [
   "RUSTSEC-2024-0419", # gtk3-macros is unmaintained
   "RUSTSEC-2024-0420", # gtk-sys is unmaintained
   "RUSTSEC-2024-0429", # glib 0.18 unsoundness; fixed by GTK4
-  # These unmaintained Unicode crates are also transitive through Tauri 2.
-  "RUSTSEC-2025-0075",
-  "RUSTSEC-2025-0080",
-  "RUSTSEC-2025-0081",
-  "RUSTSEC-2025-0098",
-  "RUSTSEC-2025-0100",
 ]

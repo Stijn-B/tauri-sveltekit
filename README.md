@@ -10,7 +10,7 @@
 ## Getting Started
 
 Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), including
-Rust and a supported Node.js release (22.12 or newer within Node 22, or Node 24+). The
+Rust and a supported Node.js release (22.13 or newer within Node 22, or Node 24+). The
 repository's recommended Node and Rust toolchains are recorded in `.nvmrc` and
 `rust-toolchain.toml`.
 
