@@ -15,13 +15,13 @@
 		<div class="space-y-6">
 			<div class="flex justify-center flex-wrap gap-2">
 				<span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-md text-sm font-medium">
-					SvelteKit v3
+					SvelteKit
 				</span>
 				<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
-					Vite v8
+					Vite
 				</span>
 				<span class="bg-sky-100 text-sky-800 px-3 py-1 rounded-md text-sm font-medium">
-					Tauri v2
+					Tauri
 				</span>
 			</div>
 		</div>
