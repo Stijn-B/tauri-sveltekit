@@ -7,7 +7,7 @@
 
 Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). You
 will need Rust, the platform-specific system dependencies, and a supported Node.js release
-(22.13 or newer within Node 22, or Node 24+).
+(22.17 or newer within Node 22, or Node 24+).
 
 ## Step 1: Create a SvelteKit project
 
@@ -23,33 +23,60 @@ You can follow the same steps in an existing SvelteKit project.
 
 ### Configure a static SPA build
 
-Tauri loads static frontend assets in its webview, so install SvelteKit's static adapter:
+Tauri loads static frontend assets in its webview. Use SvelteKit 3 with version 4 of the
+static adapter and compatible frontend tooling:
 
 ```shell
-npm install -D @sveltejs/adapter-static
+npm install -D @sveltejs/kit@^3 @sveltejs/adapter-static@^4 \
+  @sveltejs/vite-plugin-svelte@^7 svelte@^5.57.1 vite@^8.0.12 \
+  svelte-check@^4.7.6 typescript@^6
 npm uninstall -D @sveltejs/adapter-auto
 ```
 
-Configure `svelte.config.js`:
+Configure `vite.config.js`. SvelteKit 3 keeps its configuration in the Vite plugin;
+when migrating from SvelteKit 2, move your existing options here and remove
+`svelte.config.js`:
 
 ```javascript
 import adapter from '@sveltejs/adapter-static';
+import { sveltekit } from '@sveltejs/kit/vite';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { defineConfig } from 'vite';
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	preprocess: vitePreprocess(),
-	kit: {
-		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: 'index.html'
+export default defineConfig({
+	plugins: [
+		sveltekit({
+			preprocess: vitePreprocess(),
+			adapter: adapter({
+				pages: 'build',
+				assets: 'build',
+				fallback: 'index.html'
+			})
 		})
+	],
+	server: {
+		watch: {
+			ignored: ['**/src-tauri/**']
+		}
 	}
-};
-
-export default config;
+});
 ```
+
+In `tsconfig.json` (or `jsconfig.json` for a JavaScript project), extend the generated
+`$app/tsconfig` configuration and specify which source files to check. Preserve any
+existing compiler options:
+
+```json
+{
+	"extends": "$app/tsconfig",
+	"include": ["src", "*.js", "*.ts"],
+	"exclude": ["src/service-worker"]
+}
+```
+
+Keep TypeScript on version 6 while SvelteKit and `svelte-check` require that major.
+See the [SvelteKit 3 migration guide](https://svelte.dev/docs/kit/migrating-to-sveltekit-3)
+for changes affecting an existing application's imports and server APIs.
 
 Create `src/routes/+layout.js` to make the application a client-rendered SPA:
 
@@ -124,22 +151,8 @@ The resulting `src-tauri/tauri.conf.json` build section should look like this:
 }
 ```
 
-Tauri recommends preventing Vite from watching generated Rust files. Add the watch
-exclusion alongside your existing Vite plugins:
-
-```javascript
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
-
-export default defineConfig({
-	plugins: [sveltekit()],
-	server: {
-		watch: {
-			ignored: ['**/src-tauri/**']
-		}
-	}
-});
-```
+The Vite configuration above excludes generated Rust files from its watcher, as
+recommended by Tauri.
 
 If you change Vite's port, update `build.devUrl` in `tauri.conf.json` to match.
 

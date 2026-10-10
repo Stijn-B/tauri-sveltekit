@@ -15,7 +15,7 @@
 		<div class="space-y-6">
 			<div class="flex justify-center flex-wrap gap-2">
 				<span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-md text-sm font-medium">
-					SvelteKit v2
+					SvelteKit v3
 				</span>
 				<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-sm font-medium">
 					Vite v8
