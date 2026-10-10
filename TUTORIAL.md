@@ -176,6 +176,18 @@ the commands and path scopes the application needs. See the
 [capabilities guide](https://v2.tauri.app/security/capabilities/) and the documentation
 for each plugin before enabling permissions.
 
+### Configure a Content Security Policy
+
+Copy the `app.security` section from this repository's
+[`src-tauri/tauri.conf.json`](src-tauri/tauri.conf.json) into your configuration. Its
+production `csp` permits bundled assets and Tauri IPC, while `devCsp` additionally
+permits the inline elements and local WebSocket used by Vite's development server.
+
+Tailor the policy to your application's origins and asset types using the
+[Tauri CSP guide](https://v2.tauri.app/security/csp/). CSP controls webview resource
+loading; it does not replace native plugin capabilities. Verify the packaged app as
+well as development mode when making changes.
+
 ## Step 4: Run and build the application
 
 Start the desktop application in development mode:

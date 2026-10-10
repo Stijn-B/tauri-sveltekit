@@ -89,6 +89,22 @@ Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. Sv
 > [!IMPORTANT]  
 > In SPA mode, SvelteKit features that require a server, such as server-side rendering (SSR) and server endpoints, are not available at runtime. Tauri loads the pre-built static files directly in its webview instead of running a SvelteKit server.
 
+## Content Security Policy
+
+The packaged app uses a [Content Security Policy](https://v2.tauri.app/security/csp/)
+in `src-tauri/tauri.conf.json`. It permits local frontend assets and Tauri IPC; remote
+scripts and frontend network requests are blocked by default. Tauri adds hashes and
+nonces for its bundled scripts and styles. Inline style attributes remain allowed for
+Svelte's DOM styling and this starter's gradient.
+
+A separate `devCsp` permits inline script/style elements and the local Vite WebSocket
+on port 5173 for development and hot reload. These allowances are not part of the
+packaged app's policy. Update the WebSocket sources if you change the development port.
+
+When adding an API or remote asset, add only the required origin to the appropriate
+CSP directive. Native plugin permissions are configured separately through Tauri
+capabilities. Test both `npm run dev` and a packaged build after changing the policy.
+
 ## About the frameworks
 
 [**Tauri**](https://v2.tauri.app/) is a framework for building desktop applications with a Rust backend and a web frontend. See its [security documentation](https://v2.tauri.app/security/) and [architecture guide](https://v2.tauri.app/concept/architecture/) to understand how the webview and native backend interact.
