@@ -119,8 +119,19 @@ jobs:
 
   integration:
     needs: [frontend, rust, security]
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-latest
+            bundles: deb,appimage,rpm
+          - platform: macos-latest
+            bundles: app
+          - platform: windows-latest
+            bundles: nsis
+
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -128,6 +139,7 @@ jobs:
           persist-credentials: false
 
       - name: Install system dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
@@ -145,4 +157,28 @@ jobs:
         run: npx svelte-kit sync
 
       - name: Integration build
-        run: npm run build
+        run: npm run tauri -- build --ci --bundles ${{ matrix.bundles }} -- --locked
+
+      - name: Verify native bundle output
+        shell: bash
+        env:
+          TAURI_CI_PLATFORM: ${{ runner.os }}
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { readdirSync, statSync } from 'node:fs';
+          const root = 'src-tauri/target/release/bundle';
+          const entries = readdirSync(root, { recursive: true }).map(path => `${root}/${path}`);
+          const suffixes = { Linux: ['.deb', '.AppImage', '.rpm'], macOS: ['.app'], Windows: ['-setup.exe'] };
+          for (const suffix of suffixes[process.env.TAURI_CI_PLATFORM]) {
+            const bundle = entries.find(path => path.endsWith(suffix));
+            assert.ok(bundle, `Missing ${suffix} bundle`);
+            const stats = statSync(bundle);
+            assert.ok(suffix === '.app' ? stats.isDirectory() : stats.isFile() && stats.size > 0);
+            if (suffix === '.app') {
+              const executables = readdirSync(`${bundle}/Contents/MacOS`);
+              assert.ok(executables.some(name => statSync(`${bundle}/Contents/MacOS/${name}`).size > 0));
+            }
+            console.log(`Verified ${bundle}`);
+          }
+          JS

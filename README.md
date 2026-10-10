@@ -77,9 +77,10 @@ cargo clippy --locked --all-targets --all-features -- -D warnings
 cargo test --locked --all-targets --all-features
 ```
 
-CI also audits dependencies and builds a complete Linux desktop bundle. Frontend
-checks run on Linux, macOS, and Windows; native Windows/macOS builds are not covered
-by CI.
+CI audits dependencies and runs frontend checks on Linux, macOS, and Windows. Native
+release builds verify Linux DEB/AppImage/RPM packages, a macOS app bundle, and a Windows
+NSIS installer. These checks validate compilation and packaging; they do not launch
+the app or cover signing, notarization, Windows MSI installers, or macOS DMG images.
 
 ## How it works
 
