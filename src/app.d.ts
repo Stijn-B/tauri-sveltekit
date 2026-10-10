@@ -1,4 +1,4 @@
-// See https://kit.svelte.dev/docs/types#app
+// See https://svelte.dev/docs/kit/types#App
 // for information about these interfaces
 declare global {
 	namespace App {

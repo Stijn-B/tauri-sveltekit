@@ -44,6 +44,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	clearScreen: false,
 	plugins: [
 		sveltekit({
 			preprocess: vitePreprocess(),
@@ -55,6 +56,8 @@ export default defineConfig({
 		})
 	],
 	server: {
+		port: 5173,
+		strictPort: true,
 		watch: {
 			ignored: ['**/src-tauri/**']
 		}
@@ -154,7 +157,10 @@ The resulting `src-tauri/tauri.conf.json` build section should look like this:
 The Vite configuration above excludes generated Rust files from its watcher, as
 recommended by Tauri.
 
-If you change Vite's port, update `build.devUrl` in `tauri.conf.json` to match.
+The development server fails if port 5173 is already in use, rather than silently
+switching to a port Tauri will not load. `clearScreen: false` keeps Rust errors visible
+in the terminal. If you change Vite's port, update `build.devUrl` in `tauri.conf.json`
+to match.
 
 ## Step 3: Add optional native APIs
 

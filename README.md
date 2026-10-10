@@ -9,6 +9,9 @@
 
 ## Getting Started
 
+Use GitHub's **Use this template** button to create your own repository, then clone it
+and open a terminal in the project directory.
+
 Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), including
 Rust and a supported Node.js release (22.17 or newer within Node 22, or Node 24+). The
 repository's recommended Node and Rust toolchains are recorded in `.nvmrc` and
@@ -20,9 +23,11 @@ repository's recommended Node and Rust toolchains are recorded in `.nvmrc` and
 npm ci
 ```
 
-**Specify your application identifier**
+**Customize your application**
 
-To build your Tauri app you must specify its identifier in reverse domain name notation (e.g. `com.tauri.my-tauri-app`). This string must be unique across applications and contain only alphanumeric characters (A–Z, a–z, and 0–9), hyphens (-), and periods (.).
+The starter runs with its placeholder settings. Before distributing your own app,
+replace its identifier with a unique reverse-domain name (e.g. `com.example.my-tauri-app`).
+It may contain alphanumeric characters (A–Z, a–z, and 0–9), hyphens (-), and periods (.).
 
 Set your application identifier in `src-tauri/tauri.conf.json`:
 
@@ -31,6 +36,10 @@ Set your application identifier in `src-tauri/tauri.conf.json`:
 	"identifier": "com.example.my-tauri-app"
 }
 ```
+
+Also customize `productName`, `version`, and the window title in that file, the name
+and version in `package.json`, and the package metadata in `src-tauri/Cargo.toml`.
+Replace the starter icons with `npm run tauri -- icon path/to/your-icon.png`.
 
 **Run the Tauri app**
 
@@ -52,18 +61,38 @@ npm run build
 
 ![Screenshot of the Tauri app](/readme_assets/application-screenshot.png)
 
+For frontend-only development, use `npm run sveltekit:dev`; `npm run preview` serves
+the built frontend in a browser. These browser modes do not provide Tauri native APIs.
+The desktop development server uses port 5173 and fails if it is already occupied.
+
+Before submitting changes, run:
+
+```shell
+npm run check
+npm run lint
+npm run sveltekit:build
+cd src-tauri
+cargo fmt --check
+cargo clippy --locked --all-targets --all-features -- -D warnings
+cargo test --locked --all-targets --all-features
+```
+
+CI also audits dependencies and builds a complete Linux desktop bundle. Frontend
+checks run on Linux, macOS, and Windows; native Windows/macOS builds are not covered
+by CI.
+
 ## How it works
 
-Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. SvelteKit can be configured to build a static single-page app using the [@sveltejs/adapter-static adapter](https://kit.svelte.dev/docs/adapter-static). This enables us to use Tauri with SvelteKit.
+Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. SvelteKit can be configured to build a static single-page app using the [@sveltejs/adapter-static adapter](https://svelte.dev/docs/kit/adapter-static). This enables us to use Tauri with SvelteKit.
 
 > [!IMPORTANT]  
 > In SPA mode, SvelteKit features that require a server, such as server-side rendering (SSR) and server endpoints, are not available at runtime. Tauri loads the pre-built static files directly in its webview instead of running a SvelteKit server.
 
 ## About the frameworks
 
-[**Tauri**](https://tauri.app/) is a framework for building tiny, blazing fast binaries for all major desktop platforms. Developers can integrate any frontend framework that compiles to HTML, JS and CSS for building their user interface. Tauri places a great emphasis on [security](https://tauri.app/security/). You can check out how the Tauri architecture works and get a grasp on how the different components integrate [here](https://tauri.app/concept/architecture/).
+[**Tauri**](https://v2.tauri.app/) is a framework for building desktop applications with a Rust backend and a web frontend. See its [security documentation](https://v2.tauri.app/security/) and [architecture guide](https://v2.tauri.app/concept/architecture/) to understand how the webview and native backend interact.
 
-[**SvelteKit**](https://kit.svelte.dev/) is an application framework powered by Svelte which applies a new approach to building user interfaces. Whereas traditional frameworks like React and Vue do the bulk of their work in the browser, Svelte shifts that work into a compile step that happens when you build your app. Instead of using techniques like virtual DOM diffing, Svelte writes code that surgically updates the DOM when the state of your app changes which results in better performance.
+[**SvelteKit**](https://svelte.dev/docs/kit/introduction) provides routing, build tooling, and application structure for [Svelte](https://svelte.dev/docs/svelte/overview). This template uses its static adapter and client-side routing to run inside Tauri's webview.
 
 ## Desktop Apps with SvelteKit and Tauri - Step-by-Step Tutorial
 

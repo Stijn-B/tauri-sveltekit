@@ -21,9 +21,7 @@ tauri-build = { version = "2.7.1", features = [] }
 tauri = { version = "2.12.2", features = [] }
 
 [features]
-# by default Tauri runs in production mode
-# when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
+# Embed frontend assets when building for production.
 default = [ "custom-protocol" ]
-# this feature is used for production builds where `devPath` points to the filesystem
-# DO NOT remove this
+# Tauri uses its custom protocol to serve the embedded frontend.
 custom-protocol = [ "tauri/custom-protocol" ]
