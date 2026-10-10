@@ -100,3 +100,9 @@ The [TUTORIAL.md](/TUTORIAL.md) file contains a current Tauri 2 and SvelteKit 3 
 
 > [!NOTE]  
 > Clone this repository to get the final result of the tutorial.
+
+## License
+
+This template is licensed under the [MIT License](LICENSE). You may use it for personal
+and commercial projects; retain the copyright and license notice in copies or
+substantial portions of the template. Your own application may use a different license.
