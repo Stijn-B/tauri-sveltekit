@@ -10,7 +10,7 @@
 ## Getting Started
 
 Install the current [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), including
-Rust and a supported Node.js release (22.13 or newer within Node 22, or Node 24+). The
+Rust and a supported Node.js release (22.17 or newer within Node 22, or Node 24+). The
 repository's recommended Node and Rust toolchains are recorded in `.nvmrc` and
 `rust-toolchain.toml`.
 
@@ -67,7 +67,7 @@ Tauri can integrate any frontend framework that compiles to HTML, JS and CSS. Sv
 
 ## Desktop Apps with SvelteKit and Tauri - Step-by-Step Tutorial
 
-The [TUTORIAL.md](/TUTORIAL.md) file contains a current Tauri 2 and SvelteKit 2 guide for manually creating the same setup. It is useful when you want to turn an existing SvelteKit project into a desktop app, or add SvelteKit to an existing Tauri project.
+The [TUTORIAL.md](/TUTORIAL.md) file contains a current Tauri 2 and SvelteKit 3 guide for manually creating the same setup. It is useful when you want to turn an existing SvelteKit project into a desktop app, or add SvelteKit to an existing Tauri project.
 
 > [!NOTE]  
 > Clone this repository to get the final result of the tutorial.

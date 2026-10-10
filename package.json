@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"engines": {
-		"node": "^22.13.0 || >=24.0.0"
+		"node": "^22.17.0 || >=24.0.0"
 	},
 	"scripts": {
 		"dev": "npm run tauri dev",
@@ -22,8 +22,8 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/adapter-static": "^4.0.0",
+		"@sveltejs/kit": "^3.0.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@tauri-apps/cli": "^2.12.1",
@@ -38,11 +38,6 @@
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.4"
-	},
-	"overrides": {
-		"@sveltejs/kit": {
-			"cookie": "^0.7.2"
-		}
 	},
 	"type": "module"
 }
