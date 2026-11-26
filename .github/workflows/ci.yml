@@ -114,7 +114,13 @@ jobs:
         run: cargo install cargo-audit --locked --version 0.23.0
 
       - name: Audit Rust dependencies strictly
-        run: cargo audit --deny warnings
+        run: |
+          dependencies=$(cargo tree --locked --target all --all-features --edges normal,build,dev --prefix none)
+          if grep -q '^chrono v' <<< "$dependencies"; then
+            echo "chrono is enabled. Remove it before relying on the optional-dependency audit exception."
+            exit 1
+          fi
+          cargo audit --deny warnings
         working-directory: src-tauri
 
   integration:

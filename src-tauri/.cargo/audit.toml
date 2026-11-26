@@ -15,4 +15,7 @@ ignore = [
   "RUSTSEC-2024-0419", # gtk3-macros is unmaintained
   "RUSTSEC-2024-0420", # gtk-sys is unmaintained
   "RUSTSEC-2024-0429", # glib 0.18 unsoundness; fixed by GTK4
+  # Cargo.lock records serde_with's optional chrono dependency. CI verifies
+  # that chrono stays out of the enabled dependency graph.
+  "RUSTSEC-2026-0543", # chrono is unmaintained
 ]
